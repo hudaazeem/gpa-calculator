@@ -10,25 +10,64 @@ import java.util.Scanner;
 
 public class CalculatorGPA{
     public static void main(String[] args) {
-        //TODO - maybe make a cool animation??
-        System.out.println("Welcome to my project!");
-        System.out.println("This program will calculate all of your GPAs based on the Dallas ISD system.");
-        
-        System.out.println("Please input the number of AP courses you are taking.");
-        Scanner scannerAP = new Scanner(System.in);
-        int numAPs = scannerAP.nextInt();
+        //TODO - maybe make a cool animation?
+        Scanner scanner = new Scanner(System.in);
 
-        for(int i=1; i<=numAPs; i++){
-            System.out.println("What is your raw score out of hundred for AP course " + i + "?");
-            Scanner scannerAPgrade = new Scanner(System.in);
-            int APgrade = scannerAPgrade.nextInt();
+        boolean running = true; 
+
+        
             
-        }        
-        
-        System.out.println("Select any of the options below!");
+        while(running){
+            System.out.println("Welcome to my project!");
+            System.out.println("This program will calculate all of your GPAs based on the Dallas ISD system.");
+            System.out.println("Select any of the options below!");
+            System.out.println("[1] Calculate cumulative GPA.");
+            System.out.println("[2] Calculate unweighted GPA.");
+            System.out.println("[3] Calculate weighted GPA");
+            System.out.println("[4] Placeholder for estimations");
 
+            int choice = scanner.nextInt();
+
+            switch(choice){
+                case 1: 
+                    //calculateCumulativeGPA();
+                    break;
+                case 2:
+                    //calculateUnweightedGPA();
+                    break;
+                case 3:
+                    //calculateWeightedGPA();
+                    break;
+                default:
+                    System.out.println("Invalid choice, please try again!");
+            }
+        }
+        //double apGrades[]=receiveGrades(scanner, "AP");
+        //double honorsGrades[]=receiveGrades(scanner, "honors");
+        //double onLevelGrades[]=receiveGrades(scanner, "on level");
+
+        
         
     }
         
+    public static double[] receiveGrades(Scanner scanner, String courseType){
+        System.out.println("Please input the number of " + courseType +" classes you are currently taking or have taken.");
+            int numCourses = scanner.nextInt();
 
+            double[] grades = new double[numCourses];
+
+            for(int i=1; i<=numCourses; i++){
+                System.out.println("What is your raw score (out of 100) for " + courseType +"course" + i + "?");
+                double grade = scanner.nextDouble();
+                
+                grades[i-1]=grade;
+                
+            }
+            return grades;     
+    }
+
+    public static double calculateCumulativeGPA(){
+        receiveGrades(scanner, "all");
+        
+    }
 }

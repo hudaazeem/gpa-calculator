@@ -7,6 +7,16 @@
 //asks if user wants rank gpa (special criteria)
 //if i want xx to increase by xx, what should i do (??)
 //go back to home screen after an option instead of displaying menu options instead
+//TODO - add error statements to prevent dividion by zero
+
+
+//Projects/Performance Tasks = 20%: This aligns with your original question — at many DISD high schools, big projects or performance-based tasks generally count about 20% of the grading period.
+//Daily Grades = 40%: Homework, participation, quizzes — frequent small assignments.
+//Quarter Tests = 15%: Sometimes lumped in with tests or counted as a separate “big test” at the end of the quarter.
+//Tests = 25%: The typical exams or chapter tests.
+    
+
+
 
 import java.util.Scanner;
 
@@ -23,32 +33,37 @@ public class CalculatorGPA{
         while(running){
             
             System.out.println("Select any of the options below!");
-            System.out.println("[1] Calculate cumulative GPA");
-            System.out.println("[2] Calculate unweighted GPA");
-            System.out.println("[3] Calculate weighted GPA");
-            System.out.println("[4] Calculate ranking GPA");
-            System.out.println("[5] Exit");
+            System.out.println("[1] Calculate class grade");
+            System.out.println("[2] Calculate cumulative GPA");
+            System.out.println("[3] Calculate unweighted GPA");
+            System.out.println("[4] Calculate weighted GPA");
+            System.out.println("[5] Calculate ranking GPA");
+            System.out.println("[6] Exit");
             System.out.println("[0] Info");
             double average;
             int choice = scanner.nextInt();
             switch(choice){
-                case 1: 
+                case 1:
+                    average = calculateClassGrade(scanner);
+                    System.out.println("Your grade for the class is " + average + "!");
+                    break;
+                case 2: 
                     average = calculateCumulativeGPA(scanner);
                     System.out.println("Your cumulative GPA is " + average + "!");
                     break;
-                case 2:
+                case 3:
                     average = calculateCumulativeGPA(scanner);
                     double averageUnweighted = average/25;
                     System.out.println("Your unweighted GPA is " + averageUnweighted+ "!");
                     break;
-                case 3:
+                case 4:
                     average = calculateWeightedGPA(scanner);
                     System.out.println("Your weighted GPA is " + average + "!");
                     break;
-                case 4:
+                case 5:
                     //estimate future grades
                     break;
-                case 5:
+                case 6:
                     running = false;
                     System.out.println("Bye!!");
                     break;
@@ -68,11 +83,11 @@ public class CalculatorGPA{
 
             double[] grades = new double[numCourses];
 
-            for(int i=1; i<=numCourses; i++){
-                System.out.println("What is your raw score (out of 100) for " +"course " + i + "?");
+            for(int i=0; i<numCourses; i++){
+                System.out.println("What is your raw score (out of 100) for " +"course " + (i+1) + "?");
                 double grade = scanner.nextDouble();
                 
-                grades[i-1]=grade;
+                grades[i]=grade;
                 
             }
             return grades;     
@@ -197,5 +212,39 @@ public class CalculatorGPA{
     public static double calculateRankingGPA(Scanner scanner){
         
         return 6.7;
+    }
+
+    public static double calculateClassGrade(Scanner scanner){
+        double dailyAverage = calculateClassGradeCategory(scanner, "daily grades");
+        double projectAverage = calculateClassGradeCategory(scanner, "project grades");
+        double quarterTestAverage = calculateClassGradeCategory(scanner, "quarter tests");
+        double testAverage = calculateClassGradeCategory(scanner, "regular tests");
+        double acpAverage = calculateClassGradeCategory(scanner, "ACP/midterms/finals");
+
+        double semesterGrade = (0.2*projectAverage)+(0.4*dailyAverage)+(.15*quarterTestAverage)+(.25*testAverage);
+
+        double finalSemesterGrade = 0.85*semesterGrade+0.15*acpAverage;
+
+        return finalSemesterGrade;
+    }
+
+
+    public static double calculateClassGradeCategory(Scanner scanner, String category){
+        System.out.println("Enter the number of " + category + " you have.");
+        int numCourses = scanner.nextInt();
+        double[] grades = new double[numCourses];
+        for(int i =0; i< numCourses; i++){
+            System.out.println("Enter the grade for assignment " + (i+1));
+            grades[i]=scanner.nextDouble();
+        }
+
+        double sum = 0.0;
+        for(int i =0; i<grades.length; i++){
+            sum += grades[i];
+        }
+
+        double average = sum/numCourses;
+
+        return average;
     }
 }

@@ -61,7 +61,7 @@ public class CalculatorGPA{
                     System.out.println("Your weighted GPA is " + average + "!");
                     break;
                 case 5:
-                    //estimate future grades
+                    //ranking gpa
                     break;
                 case 6:
                     running = false;
@@ -106,113 +106,38 @@ public class CalculatorGPA{
     
     public static double calculateWeightedGPA(Scanner scanner){
         double[] gradesAP = receiveGrades(scanner, "Category 1");
-        for(int i =0; i< gradesAP.length; i++){
-            if(gradesAP[i] >= 97){
-                gradesAP[i] = 5;
-            }else if(gradesAP[i]>=93){
-                gradesAP[i] = 4.8;
-            }else if(gradesAP[i]>=90){
-                gradesAP[i]=4.6;
-            }else if(gradesAP[i]>=87){
-                gradesAP[i] = 4.4;
-            }else if(gradesAP[i]>=83){
-                gradesAP[i]=4.2;
-            }else if(gradesAP[i]>=80){
-                gradesAP[i]=4.0;
-            }else if(gradesAP[i]>=77){
-                gradesAP[i]=3.8;
-            }else if(gradesAP[i]>=73){
-                gradesAP[i]=3.6;
-            }else if(gradesAP[i]>=71){
-                gradesAP[i]=3.4;
-            }else if(gradesAP[i]>=70){
-                gradesAP[i]=3.0;
-            }else if(gradesAP[i]>=60){
-                gradesAP[i]=2.0;
-            }else{
-                gradesAP[i]=0;
-            }
-        }
-        double sumAP=0.0;
-        for(int i = 0; i<gradesAP.length; i++){
-            sumAP+=gradesAP[i];
-        }
-
         double[] gradesHonors = receiveGrades(scanner, "Category 2");
-        for(int i = 0; i< gradesHonors.length; i++){
-            if(gradesHonors[i] >= 97){
-                gradesHonors[i] = 4.5;
-            }else if(gradesHonors[i]>=93){
-                gradesHonors[i] = 4.3;
-            }else if(gradesHonors[i]>=90){
-                gradesHonors[i]=4.1;
-            }else if(gradesHonors[i]>=87){
-                gradesHonors[i] = 3.9;
-            }else if(gradesHonors[i]>=83){
-                gradesHonors[i]=3.7;
-            }else if(gradesHonors[i]>=80){
-                gradesHonors[i]=3.5;
-            }else if(gradesHonors[i]>=77){
-                gradesHonors[i]=3.3;
-            }else if(gradesHonors[i]>=73){
-                gradesHonors[i]=3.1;
-            }else if(gradesHonors[i]>=71){
-                gradesHonors[i]=2.9;
-            }else if(gradesHonors[i]>=70){
-                gradesHonors[i]=2.5;
-            }else if(gradesHonors[i]>=60){
-                gradesHonors[i]=1.5;
-            }else{
-                gradesHonors[i]=0;
-            }
-        }
-
-        double sumHonors = 0.0;
-        for(int i=0; i<gradesHonors.length; i++){
-            sumHonors+=gradesHonors[i];
-        }
-
         double[] gradesRegular = receiveGrades(scanner, "Category 3");
-        for(int i = 0; i<gradesRegular.length; i++){
-            if(gradesRegular[i] >= 97){
-                gradesRegular[i] = 4.0;
-            }else if(gradesRegular[i]>=93){
-                gradesRegular[i] = 3.8;
-            }else if(gradesRegular[i]>=90){
-                gradesRegular[i]= 3.6;
-            }else if(gradesRegular[i]>=87){
-                gradesRegular[i] = 3.4;
-            }else if(gradesRegular[i]>=83){
-                gradesRegular[i]=3.2;
-            }else if(gradesRegular[i]>=80){
-                gradesRegular[i]=3.0;
-            }else if(gradesRegular[i]>=77){
-                gradesRegular[i]=2.8;
-            }else if(gradesRegular[i]>=73){
-                gradesRegular[i]=2.6;
-            }else if(gradesRegular[i]>=71){
-                gradesRegular[i]=2.4;
-            }else if(gradesRegular[i]>=70){
-                gradesRegular[i]=2.0;
-            }else if(gradesRegular[i]>=60){
-                gradesRegular[i]=1.0;
-            }else{
-                gradesRegular[i]=0;
-            }
-        }
-
-        double sumRegular = 0.0;
-        for(int i=0; i<gradesRegular.length; i++){
-            sumRegular+=gradesRegular[i];
-        }
-        double average = (sumAP+sumHonors+sumRegular)/(gradesAP.length+gradesHonors.length+gradesRegular.length);
-        return average;
-    }
-
-    public static double calculateRankingGPA(Scanner scanner){
         
-        return 6.7;
+        for(int i =0; i< gradesAP.length; i++){
+            gradesAP[i] = convertToGPA(gradesAP[i], "AP");
+        }
+
+        for(int i = 0; i< gradesHonors.length; i++){
+            gradesHonors[i] = convertToGPA(gradesHonors[i], "Honors");
+        }
+
+        for(int i = 0; i<gradesRegular.length; i++){
+            gradesRegular[i] = convertToGPA(gradesRegular[i], "Regular");
+        }
+
+        double sum = 0.0;
+
+        for(int i =0; i<gradesAP.length; i++){
+            sum+= gradesAP[i];
+        }
+        for(int i =0; i<gradesHonors.length; i++){
+            sum+=gradesHonors[i];
+        }
+        for(int i = 0; i<gradesRegular.length; i++){
+            sum+=gradesRegular[i];
+        }
+
+        int numCourses = gradesAP.length + gradesHonors.length + gradesRegular.length;
+
+        return sum/numCourses;
     }
+
 
     public static double calculateClassGrade(Scanner scanner){
         double dailyAverage = calculateClassGradeCategory(scanner, "daily grades");
@@ -230,6 +155,7 @@ public class CalculatorGPA{
 
 
     public static double calculateClassGradeCategory(Scanner scanner, String category){
+
         System.out.println("Enter the number of " + category + " you have.");
         int numCourses = scanner.nextInt();
         double[] grades = new double[numCourses];
@@ -247,4 +173,85 @@ public class CalculatorGPA{
 
         return average;
     }
+
+    public static double rankingGPA(Scanner scanner){
+        System.out.println("What grade are you in? Please only enter numbers (ex. 10)");
+        int grade = scanner.nextInt();
+
+        System.out.println("What semester are you in right now?");
+        int semester = scanner.nextInt();
+
+        if(grade==10&&semester==1){
+            highestGrades(scanner, "math", 1);
+            highestGrades(scanner, "english", 1);
+            highestGrades(scanner, "science", 1);
+            highestGrades(scanner, "history", 1);
+        }else if(grade==10&&semester==2){
+            highestGrades(scanner, "math", 2);
+            highestGrades(scanner, "english", 2);
+            highestGrades(scanner, "science", 2);
+            highestGrades(scanner, "history", 1);
+        }else if(grade==11&&semester==1){
+            highestGrades(scanner, "math", 2);
+            highestGrades(scanner, "english", 2);
+            highestGrades(scanner, "science", 2);
+            highestGrades(scanner, "history", 2);
+        }else if(grade==11&&semester==2){
+            highestGrades(scanner, "math", 3);
+            highestGrades(scanner, "english", 3);
+            highestGrades(scanner, "science", 3);
+            highestGrades(scanner, "history", 2);
+        }else if(grade==12&&semester==1){
+            highestGrades(scanner, "math", 3);
+            highestGrades(scanner, "english", 3);
+            highestGrades(scanner, "science", 3);
+            highestGrades(scanner, "history", 2);
+        }else if(grade==12&&semester==2){
+            highestGrades(scanner, "math", 4);
+            highestGrades(scanner, "english", 4);
+            highestGrades(scanner, "science", 4);
+            highestGrades(scanner, "history", 3);
+        }else{
+            System.out.println("Please input your grade again. Note that ranking only starts in 10th grades.");
+        }
+    }
+
+    public static double[] highestGrades(Scanner scanner, String subject, int number){
+        double[] grades = new double[number];
+        for(int i = 0; i<number; i++){   
+            System.out.println("What is the grade for " + subject + "class " + (i+1));
+            grades[i]=scanner.nextDouble();
+        }
+        return grades;
+    }
+
+    public static double convertToGPA(double grade, String courseType){
+        
+        double[] thresholds = new double[]{97, 93, 90, 87, 83, 80, 77, 73, 71, 70, 60};
+        double[] gpas;
+
+        switch(courseType){
+            case "AP":
+                gpas = new double[]{5.0, 4.8, 4.6, 4.4, 4.2, 4.0, 3.8, 3.6, 3.4, 3.0, 2.0};
+                break;
+            case "Honors":
+                gpas = new double[]{4.5, 4.3, 4.1, 3.9, 3.7, 3.5, 3.3, 3.1, 2.9, 2.5, 1.5};
+                break;
+            case "Regular":
+                gpas = new double[]{4.0, 3.8, 3.6, 3.4, 3.2, 3.0, 2.8, 2.6, 2.4, 2.0, 1.0};
+                break;
+            default:
+                return 0.0;
+        
+        }
+
+        for(int i = 0; i< thresholds.length; i++){
+            if (grade >= thresholds[i]){
+                return gpas[i];
+            }
+        }
+
+        return 0.0;
+    }
+    
 }

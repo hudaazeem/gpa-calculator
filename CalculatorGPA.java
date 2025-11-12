@@ -1,28 +1,33 @@
-//plan:
-//first prompts user to enter course information (how many aps, what grades)
-//main features:
-//asks if user wants cumultive gpa (98.4)
-//asks if user wants unweighted gpa (3.9)
-//asks if user wants weighted gpa (4.3)
-//asks if user wants rank gpa (special criteria)
-//if i want xx to increase by xx, what should i do (??)
-//go back to home screen after an option instead of displaying menu options instead
-//TODO - add error statements to prevent dividion by zero
+/*TODO
+- color coded output - ansi colors
+- rounded results to 6-7 decimals
+- input validation
+- [DONE]are you sure confirmation? when exiting
+- predictive gpa tool
+- gpa improvement tracker
+- grade distribution summary
+- gpa scale comparison
+- save gpa data to file
+- export gpa report
+- autosave last run
+- gui version
+- transcript generator
+- class ranking predictor
+- custom weight profiles
 
 
-//Projects/Performance Tasks = 20%: This aligns with your original question — at many DISD high schools, big projects or performance-based tasks generally count about 20% of the grading period.
-//Daily Grades = 40%: Homework, participation, quizzes — frequent small assignments.
-//Quarter Tests = 15%: Sometimes lumped in with tests or counted as a separate “big test” at the end of the quarter.
-//Tests = 25%: The typical exams or chapter tests.
+
+*/
     
 
 
 
 import java.util.Scanner;
+import java.util.Arrays;
 
 public class CalculatorGPA{
     public static void main(String[] args) {
-        //TODO - maybe make a cool animation?
+
         Scanner scanner = new Scanner(System.in);
 
         boolean running = true; 
@@ -46,30 +51,57 @@ public class CalculatorGPA{
                 case 1:
                     average = calculateClassGrade(scanner);
                     System.out.println("Your grade for the class is " + average + "!");
+                    waitForEnter(scanner);
                     break;
                 case 2: 
                     average = calculateCumulativeGPA(scanner);
                     System.out.println("Your cumulative GPA is " + average + "!");
+                    waitForEnter(scanner);
                     break;
                 case 3:
                     average = calculateCumulativeGPA(scanner);
                     double averageUnweighted = average/25;
                     System.out.println("Your unweighted GPA is " + averageUnweighted+ "!");
+                    waitForEnter(scanner);
                     break;
                 case 4:
                     average = calculateWeightedGPA(scanner);
                     System.out.println("Your weighted GPA is " + average + "!");
+                    waitForEnter(scanner);
                     break;
                 case 5:
-                    //ranking gpa
+                    average = rankingGPA(scanner);
+                    System.out.println("Your ranking GPA is "+ average + "!");
+                    waitForEnter(scanner);
                     break;
                 case 6:
-                    running = false;
-                    System.out.println("Bye!!");
+                    System.out.println("Are you sure? (y/n)");
+                    String confirm = scanner.next();
+                    if(confirm.equalsIgnoreCase("y")){
+                        running = false;
+                        System.out.println("Bye!!");
+                    }else{
+                        System.out.println("Returning to main menu...");
+                    }
+                    
                     break;
                 case 0:
-                    System.out.println("[put instructions here]");
-                    //scanner option to go back to home screen
+                    System.out.println("===== GPA Calculator Info =====");
+                    System.out.println("This program calculates your GPA based on Dallas ISD's regulations");
+                    System.out.println("You can choose from the following options:");
+                    System.out.println("1 - Calculate class grade (weighted by projects, daily grades, tests, etc.) *Note that it uses the general percentage, although your teacher may have a different system set in place*");
+                    System.out.println("2 - Calculate cumulative gpa (gives you your overall average)");
+                    System.out.println("3 - Calculate unweighted GPA (All courses are weighed equally)");
+                    System.out.println("4 - Calculate weighted GPA (AP/IB and honors/dual credit classes have higher weightings)");
+                    System.out.println("5 - Calculate ranking GPA (this is used to determine your class rank, if your school does this)");
+                    System.out.println("6 - Exit the program");
+
+                    System.out.println("\nInstructions:");
+                    System.out.println("--> Enter numeric choices to navigate the menu");
+                    System.out.println("--> Enter grades as numbers out of 100");
+                    System.out.println("--> Press enter after each input when prompted");
+                    System.out.println("--> After each calculation, press enter to return to the main menu");
+                    waitForEnter(scanner);
                     break;
                 default:
                     System.out.println("Invalid choice, please try again!");
@@ -77,6 +109,12 @@ public class CalculatorGPA{
         }    
     }
         
+    public static void waitForEnter(Scanner scanner){
+        System.out.println("Press enter to return to the main menu");
+        scanner.nextLine();
+        scanner.nextLine();
+    }
+
     public static double[] receiveGrades(Scanner scanner, String courseType){
         System.out.println("Please input the number of " + courseType +" classes you are currently taking AND have taken.");
             int numCourses = scanner.nextInt();
@@ -94,7 +132,11 @@ public class CalculatorGPA{
     }
 
     public static double calculateCumulativeGPA(Scanner scanner){
-       double[] grades = receiveGrades(scanner, "all");
+        double[] grades = receiveGrades(scanner, "all");
+        if(grades.length==0){
+            System.out.println("Error: You must enter atleast one class.");
+            return 0.0;
+        }
         double sum = 0.0;
         for(int i = 0; i< grades.length; i++){
             sum += grades[i];
@@ -135,6 +177,11 @@ public class CalculatorGPA{
 
         int numCourses = gradesAP.length + gradesHonors.length + gradesRegular.length;
 
+        if(numCourses==0){
+            System.out.println("Error: No courses entered.");
+            return 0.0;
+        }
+
         return sum/numCourses;
     }
 
@@ -169,6 +216,11 @@ public class CalculatorGPA{
             sum += grades[i];
         }
 
+        if(numCourses ==0){
+            System.out.println("Error: You must have at least one assignment.");
+            return 0.0;
+        }
+
         double average = sum/numCourses;
 
         return average;
@@ -180,49 +232,91 @@ public class CalculatorGPA{
 
         System.out.println("What semester are you in right now?");
         int semester = scanner.nextInt();
-
+        double total=0;
         if(grade==10&&semester==1){
-            highestGrades(scanner, "math", 1);
-            highestGrades(scanner, "english", 1);
-            highestGrades(scanner, "science", 1);
-            highestGrades(scanner, "history", 1);
+            double mathGrades = averageHighestGrades(scanner, "math", 1);
+            double engGrades = averageHighestGrades(scanner, "english", 1);
+            double sciGrades = averageHighestGrades(scanner, "science", 1);
+            double histGrades = averageHighestGrades(scanner, "history", 1);
+            total = mathGrades+engGrades+sciGrades+histGrades;
+            double rankingGPA = total/4;
+            return rankingGPA;
         }else if(grade==10&&semester==2){
-            highestGrades(scanner, "math", 2);
-            highestGrades(scanner, "english", 2);
-            highestGrades(scanner, "science", 2);
-            highestGrades(scanner, "history", 1);
+            double mathGrades = averageHighestGrades(scanner, "math", 2);
+            double engGrades = averageHighestGrades(scanner, "english", 2);
+            double sciGrades = averageHighestGrades(scanner, "science", 2);
+            double histGrades = averageHighestGrades(scanner, "history", 1);
+            total = 2*mathGrades+2*engGrades+2*sciGrades+histGrades;
+            double rankingGPA = total/7;
+            return rankingGPA;
         }else if(grade==11&&semester==1){
-            highestGrades(scanner, "math", 2);
-            highestGrades(scanner, "english", 2);
-            highestGrades(scanner, "science", 2);
-            highestGrades(scanner, "history", 2);
+            double mathGrades = averageHighestGrades(scanner, "math", 2);
+            double engGrades = averageHighestGrades(scanner, "english", 2);
+            double sciGrades = averageHighestGrades(scanner, "science", 2);
+            double histGrades = averageHighestGrades(scanner, "history", 2);
+            total = 2*mathGrades+2*engGrades+2*sciGrades+2*histGrades;
+            double rankingGPA = total/8;
+            return rankingGPA;
         }else if(grade==11&&semester==2){
-            highestGrades(scanner, "math", 3);
-            highestGrades(scanner, "english", 3);
-            highestGrades(scanner, "science", 3);
-            highestGrades(scanner, "history", 2);
+            double mathGrades = averageHighestGrades(scanner, "math", 3);
+            double engGrades = averageHighestGrades(scanner, "english", 3);
+            double sciGrades = averageHighestGrades(scanner, "science", 3);
+            double histGrades = averageHighestGrades(scanner, "history", 2);
+            total = 3*mathGrades+3*engGrades+3*sciGrades+2*histGrades;
+            double rankingGPA = total/11;
+            return rankingGPA;
         }else if(grade==12&&semester==1){
-            highestGrades(scanner, "math", 3);
-            highestGrades(scanner, "english", 3);
-            highestGrades(scanner, "science", 3);
-            highestGrades(scanner, "history", 2);
+            double mathGrades = averageHighestGrades(scanner, "math", 3);
+            double engGrades = averageHighestGrades(scanner, "english", 3);
+            double sciGrades = averageHighestGrades(scanner, "science", 3);
+            double histGrades = averageHighestGrades(scanner, "history", 2);
+            total = 3*mathGrades+3*engGrades+3*sciGrades+2*histGrades;
+            double rankingGPA = total/11;
+            return rankingGPA;
         }else if(grade==12&&semester==2){
-            highestGrades(scanner, "math", 4);
-            highestGrades(scanner, "english", 4);
-            highestGrades(scanner, "science", 4);
-            highestGrades(scanner, "history", 3);
+            double mathGrades = averageHighestGrades(scanner, "math", 4);
+            double engGrades = averageHighestGrades(scanner, "english", 4);
+            double sciGrades = averageHighestGrades(scanner, "science", 4);
+            double histGrades = averageHighestGrades(scanner, "history", 3);
+            total = 4*mathGrades+4*engGrades+4*sciGrades+3*histGrades;
+            double rankingGPA = total/15;
+            return rankingGPA;
         }else{
             System.out.println("Please input your grade again. Note that ranking only starts in 10th grades.");
+            return 0.0;
         }
+
+
     }
 
-    public static double[] highestGrades(Scanner scanner, String subject, int number){
-        double[] grades = new double[number];
+    public static double averageHighestGrades(Scanner scanner, String subject, int number){
+        System.out.println("How many " + subject + "classes do you have?");
+        int numCourses = scanner.nextInt();
+
+        double[] grades = new double[numCourses];
+
         for(int i = 0; i<number; i++){   
-            System.out.println("What is the grade for " + subject + "class " + (i+1));
+            System.out.println("What is the grade for " + subject + "class " + (i+1) +":");
             grades[i]=scanner.nextDouble();
+            
+
         }
-        return grades;
+        Arrays.sort(grades);
+        double sumTop=0;
+        for(int i = numCourses -1; i>=numCourses-number; i--){
+            sumTop += grades[i];
+        }
+
+        if(number == 0){
+            System.out.println("Error: Can't average zero grades");
+            return 0.0;
+        }
+
+        if(numCourses < number){
+            System.out.println("Error: You only entered "+ numCourses+" grades, but you need "+number+".");
+        }
+
+        return sumTop/number;
     }
 
     public static double convertToGPA(double grade, String courseType){

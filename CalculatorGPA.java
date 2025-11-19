@@ -1,31 +1,36 @@
 /*TODO
-- color coded output - ansi colors
-- rounded results to 6-7 decimals
-- input validation
+- [DONE] color coded output - ansi colors
+- [DONE] rounded results to 6-7 decimals
+- [DONE] input validation
 - [DONE]are you sure confirmation? when exiting
 - predictive gpa tool
-- gpa improvement tracker
-- grade distribution summary
-- gpa scale comparison
-- save gpa data to file
-- export gpa report
-- autosave last run
+- [done] custom weight profiles
+
+- autosave last run??
 - gui version
-- transcript generator
-- class ranking predictor
-- custom weight profiles
+- export gpa report
+
 
 
 
 */
-    
+
+
+
 
 
 
 import java.util.Scanner;
 import java.util.Arrays;
 
+
+
 public class CalculatorGPA{
+    public static final String RESET = "\u001B[0m";
+    public static final String RED = "\u001B[31m";
+    public static final String GREEN = "\u001B[32m";
+    public static final String YELLOW = "\u001B[33m";
+    public static final String BLUE = "\u001B[34m";
     public static void main(String[] args) {
 
         Scanner scanner = new Scanner(System.in);
@@ -38,43 +43,58 @@ public class CalculatorGPA{
         while(running){
             
             System.out.println("Select any of the options below!");
-            System.out.println("[1] Calculate class grade");
-            System.out.println("[2] Calculate cumulative GPA");
-            System.out.println("[3] Calculate unweighted GPA");
-            System.out.println("[4] Calculate weighted GPA");
-            System.out.println("[5] Calculate ranking GPA");
-            System.out.println("[6] Exit");
+            System.out.println("[1] Calculate class grade (default weightages)");
+            System.out.println("[2] Calculate class grade (custom weightings)")
+            System.out.println("[3] Calculate cumulative GPA");
+            System.out.println("[4] Calculate unweighted GPA");
+            System.out.println("[5] Calculate weighted GPA");
+            System.out.println("[6] Calculate ranking GPA");
+            System.out.println("[7] Estimate future grades");
+            System.out.println("[8] Exit");
             System.out.println("[0] Info");
             double average;
             int choice = scanner.nextInt();
             switch(choice){
                 case 1:
                     average = calculateClassGrade(scanner);
-                    System.out.println("Your grade for the class is " + average + "!");
+                    System.out.println("Your grade for the class is " + formatCumulGrade(average) + "!");
                     waitForEnter(scanner);
                     break;
-                case 2: 
-                    average = calculateCumulativeGPA(scanner);
-                    System.out.println("Your cumulative GPA is " + average + "!");
+                case 2:
+                    average = calculateCustomWeightedGrade(scanner);
+                    System.out.println("Your grade for this class is " + formatCumulGrade(average)+"!");
                     waitForEnter(scanner);
                     break;
-                case 3:
+                case 3: 
                     average = calculateCumulativeGPA(scanner);
-                    double averageUnweighted = average/25;
-                    System.out.println("Your unweighted GPA is " + averageUnweighted+ "!");
+                    System.out.println("Your cumulative GPA is " + formatGPA(average) + "!");
                     waitForEnter(scanner);
                     break;
                 case 4:
-                    average = calculateWeightedGPA(scanner);
-                    System.out.println("Your weighted GPA is " + average + "!");
+                    average = calculateCumulativeGPA(scanner);
+                    double averageUnweighted = average/25;
+                    System.out.println("Your unweighted GPA is " + formatGPA(averageUnweighted) + "!");
                     waitForEnter(scanner);
                     break;
                 case 5:
-                    average = rankingGPA(scanner);
-                    System.out.println("Your ranking GPA is "+ average + "!");
+                    average = calculateWeightedGPA(scanner);
+                    System.out.println("Your weighted GPA is " + formatGPA(average) + "!");
                     waitForEnter(scanner);
                     break;
                 case 6:
+                    average = rankingGPA(scanner);
+                    System.out.println("Your ranking GPA is "+ formatGPA(average) + "!");
+                    waitForEnter(scanner);
+                    break;
+                case 7:
+                    System.out.println("Do you want to calculate weighted GPA? (y/n)");
+                    String weightedChoice = scanner.next();
+                    boolean weighted = weightedChoice.equalsIgnoreCase("y");
+                    average = predictiveGPA(scanner, weighted);
+                    System.out.println("Your projected GPA is " + formatGPA(average)+ "!");
+                    waitForEnter(scanner);
+                    break;
+                case 8:
                     System.out.println("Are you sure? (y/n)");
                     String confirm = scanner.next();
                     if(confirm.equalsIgnoreCase("y")){
@@ -108,7 +128,28 @@ public class CalculatorGPA{
             }
         }    
     }
+
+    public static String formatGPA(double gpa){
+        gpa = Math.round(gpa*1000000.0)/1000000.0;
+        if(gpa>=3.5){
+            return GREEN + gpa + RESET;
+        }else if(gpa >=2.5){
+            return YELLOW + gpa + RESET; 
+        }else{
+            return RED + gpa + RESET;
+        }
+    }
         
+    public static String formatCumulGrade(double grade){
+        grade = Math.round(grade*1000000.0)/1000000.0;
+        if(grade>=85){
+            return GREEN + grade + RESET;
+        }else if(grade>=70){
+            return YELLOW + grade + RESET;
+        }else{
+            return RED + grade + RESET;
+        }
+    }
     public static void waitForEnter(Scanner scanner){
         System.out.println("Press enter to return to the main menu");
         scanner.nextLine();
@@ -203,7 +244,7 @@ public class CalculatorGPA{
 
     public static double calculateClassGradeCategory(Scanner scanner, String category){
 
-        System.out.println("Enter the number of " + category + " you have.");
+        System.out.println("Enter the number of " + category + " grades you have.");
         int numCourses = scanner.nextInt();
         double[] grades = new double[numCourses];
         for(int i =0; i< numCourses; i++){
@@ -348,4 +389,88 @@ public class CalculatorGPA{
         return 0.0;
     }
     
+    public static double calculateCustomClassGrade(Scanner scanner){
+        int numCategories = scanner.nextInt();
+        double[] percentages = new double[numCategories];
+        for(int i =0; i<numCategories; i++){
+            System.out.println("How many assignments do you have for category "+ i+"?");
+            
+        }
+        return 6.7;
+    }
+
+    public static double calculateCustomWeightedGrade(Scanner scanner){
+        System.out.println("How many different categories are present?");
+        int numCategories = scanner.nextInt();
+        double[] weightings = new double[numCategories];
+        double[] categoryAverages = new double[numCategories];
+
+
+        for(int i =0; i<numCategories; i++){
+            System.out.println("What is your weighting for category "+ i+"? Please write it as a decimal (eg 60% would be 0.6)");
+            weightings[i] = scanner.nextDouble();
+        }
+        double sum=0;
+        for(int i = 0; i<numCategories; i++){
+            sum+=weightings[i];
+        }
+
+        if(Math.abs(sum-1.0)>0.0001){
+            System.out.println("Oops! Your percentages don't add up... please try again.");
+            return 0.0;
+        }
+
+        for(int i =0; i<numCategories; i++){
+            double[] grades = receiveGrades(scanner, "category " + (i+1));
+
+            double total = 0;
+
+            for(double g: grades) total +=g;
+
+            if(grades.length==0){
+                System.out.println("Error: Category " + (i+1)+" has no grades.");
+            }
+
+            categoryAverages[i] = total/grades.length;
+        }
+
+        double finalGrade = 0;
+        for(int i = 0; i< numCategories; i++){
+            finalGrade += categoryAverages[i]*weightings[i];
+        }
+
+        return finalGrade;
+    }
+
+    public static double predictiveGPA(Scanner scanner, boolean weighted){
+        double[] currentGrades = receiveGrades(scanner, "current");
+
+        double[] futureGrades = receiveGrades(scanner, "future");
+
+        if(currentGrades.length + futureGrades.length == 0){
+            System.out.println("Error: no grades entered");
+            return 0.0;
+        }
+
+        if(weighted){
+            currentGrades = convertGradesToWeighted(scanner, currentGrades, "current");
+            futureGrades = convertGradesToWeighted(scanner, futureGrades, "future");
+        }
+
+        double sum = 0.0;
+
+        int totalCourses = currentGrades.length + futureGrades.length;
+
+        for(double g: currentGrades) sum +=g;
+        for(double g: futureGrades) sum += g;
+
+        return sum/totalCourses;
+    }
+
+    public static double[] convertGradesToWeighted(Scanner scanner, double[] grades, String label);
+    for(int i = 0; i<grades.length; i++){
+        System.out.println("For " + label + " class " + (i+1)+ ", what type is this course? (AP/Honors/Regular)");
+        String type = scanner.next();
+        grades[i] = convertToGPA(grades[i], type);
+    }
 }

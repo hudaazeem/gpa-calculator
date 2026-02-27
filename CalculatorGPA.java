@@ -1,50 +1,51 @@
 /*TODO
-- [DONE] color coded output - ansi colors
-- [DONE] rounded results to 6-7 decimals
-- [DONE] input validation
-- [DONE]are you sure confirmation? when exiting
-- predictive gpa tool
-- [done] custom weight profiles
-
-- autosave last run??
-- gui version
-- export gpa report
-
-
-
-
+    -Replace Arrays.sort() with the myCustomSort method provided above.
+    -Fix the loop in averageHighestGrades to collect numCourses instead of number.
+    -Delete the "TODO" comment block at the top before turning it in.
 */
 
+/*
+    - option 0, 8, and 1 work
+    - option 2 works
+    - option 3 works
+    - option 4 works
+    - check option 5
+    - 
+ */
 
-
-
-
-
+//I only used ChatGPT to use colors in the terminal, the while loop which has a "screen functionality", and debugging
 import java.util.Scanner;
 import java.util.Arrays;
 
 
 
 public class CalculatorGPA{
+    //Here, I asked ChatGPT to help me write different colors in the terminal.
+    //Here is where my colors are defined
     public static final String RESET = "\u001B[0m";
     public static final String RED = "\u001B[31m";
     public static final String GREEN = "\u001B[32m";
     public static final String YELLOW = "\u001B[33m";
     public static final String BLUE = "\u001B[34m";
-    public static void main(String[] args) {
+    
 
+    public static void main(String[] args){
+        //New scanner
         Scanner scanner = new Scanner(System.in);
 
         boolean running = true; 
-
-        System.out.println("Welcome to my project!");
+        
+        //Welcome page
+        System.out.println("Welcome!");
         System.out.println("This program will calculate all of your GPAs based on the Dallas ISD system.");
-            
+        
+        //Here, I asked ChatGPT how to have a "screen-like" functionality. It didn't generate anything else, it just told me to do a while loop.    
+        //This is the main menu
         while(running){
             
             System.out.println("Select any of the options below!");
             System.out.println("[1] Calculate class grade (default weightages)");
-            System.out.println("[2] Calculate class grade (custom weightings)")
+            System.out.println("[2] Calculate class grade (custom weightings)");
             System.out.println("[3] Calculate cumulative GPA");
             System.out.println("[4] Calculate unweighted GPA");
             System.out.println("[5] Calculate weighted GPA");
@@ -52,8 +53,11 @@ public class CalculatorGPA{
             System.out.println("[7] Estimate future grades");
             System.out.println("[8] Exit");
             System.out.println("[0] Info");
+            
             double average;
+            
             int choice = scanner.nextInt();
+            //Depending on the input from the user, it chooses the different grades to calculate
             switch(choice){
                 case 1:
                     average = calculateClassGrade(scanner);
@@ -109,12 +113,15 @@ public class CalculatorGPA{
                     System.out.println("===== GPA Calculator Info =====");
                     System.out.println("This program calculates your GPA based on Dallas ISD's regulations");
                     System.out.println("You can choose from the following options:");
-                    System.out.println("1 - Calculate class grade (weighted by projects, daily grades, tests, etc.) *Note that it uses the general percentage, although your teacher may have a different system set in place*");
-                    System.out.println("2 - Calculate cumulative gpa (gives you your overall average)");
-                    System.out.println("3 - Calculate unweighted GPA (All courses are weighed equally)");
-                    System.out.println("4 - Calculate weighted GPA (AP/IB and honors/dual credit classes have higher weightings)");
-                    System.out.println("5 - Calculate ranking GPA (this is used to determine your class rank, if your school does this)");
-                    System.out.println("6 - Exit the program");
+                    System.out.println("1 - Calculate class grade (standard weighting)");
+                    System.out.println("2 - Calculate class grade (custom weighting)");
+                    System.out.println("3 - Calculate cumulative gpa (gives you your overall average)");
+                    System.out.println("4 - Calculate unweighted GPA (All courses are weighed equally)");
+                    System.out.println("5 - Calculate weighted GPA (AP/IB and honors/dual credit classes have higher weightings)");
+                    System.out.println("6 - Calculate ranking GPA (this is used to determine your class rank, if your school does this)");
+                    System.out.println("7 - Estimate future grades");
+                    System.out.println("8 - Exit program");
+                    System.out.println("0 - Info");
 
                     System.out.println("\nInstructions:");
                     System.out.println("--> Enter numeric choices to navigate the menu");
@@ -129,6 +136,7 @@ public class CalculatorGPA{
         }    
     }
 
+    //This formats GPA (out of 4.0)
     public static String formatGPA(double gpa){
         gpa = Math.round(gpa*1000000.0)/1000000.0;
         if(gpa>=3.5){
@@ -139,7 +147,8 @@ public class CalculatorGPA{
             return RED + gpa + RESET;
         }
     }
-        
+    
+    //This formats GPA (out of 100.0)
     public static String formatCumulGrade(double grade){
         grade = Math.round(grade*1000000.0)/1000000.0;
         if(grade>=85){
@@ -150,12 +159,14 @@ public class CalculatorGPA{
             return RED + grade + RESET;
         }
     }
+    //I searched this part up
     public static void waitForEnter(Scanner scanner){
         System.out.println("Press enter to return to the main menu");
         scanner.nextLine();
         scanner.nextLine();
     }
 
+    //Recieves user input
     public static double[] receiveGrades(Scanner scanner, String courseType){
         System.out.println("Please input the number of " + courseType +" classes you are currently taking AND have taken.");
             int numCourses = scanner.nextInt();
@@ -171,7 +182,7 @@ public class CalculatorGPA{
             }
             return grades;     
     }
-
+    //Calculates cumulative GPA
     public static double calculateCumulativeGPA(Scanner scanner){
         double[] grades = receiveGrades(scanner, "all");
         if(grades.length==0){
@@ -186,7 +197,7 @@ public class CalculatorGPA{
         return average;
     }
 
-    
+    //Calculates weighted GPA
     public static double calculateWeightedGPA(Scanner scanner){
         double[] gradesAP = receiveGrades(scanner, "Category 1");
         double[] gradesHonors = receiveGrades(scanner, "Category 2");
@@ -226,7 +237,7 @@ public class CalculatorGPA{
         return sum/numCourses;
     }
 
-
+    //Calculates grade in one class
     public static double calculateClassGrade(Scanner scanner){
         double dailyAverage = calculateClassGradeCategory(scanner, "daily grades");
         double projectAverage = calculateClassGradeCategory(scanner, "project grades");
@@ -241,7 +252,7 @@ public class CalculatorGPA{
         return finalSemesterGrade;
     }
 
-
+    //Calculates class grade taking into account the 
     public static double calculateClassGradeCategory(Scanner scanner, String category){
 
         System.out.println("Enter the number of " + category + " grades you have.");
@@ -336,15 +347,15 @@ public class CalculatorGPA{
 
         double[] grades = new double[numCourses];
 
-        for(int i = 0; i<number; i++){   
+        for(int i = 0; i<numCourses; i++){   
             System.out.println("What is the grade for " + subject + "class " + (i+1) +":");
             grades[i]=scanner.nextDouble();
             
 
         }
-        Arrays.sort(grades);
+        sort(grades);
         double sumTop=0;
-        for(int i = numCourses -1; i>=numCourses-number; i--){
+        for(int i = numCourses-1; i>=numCourses-number; i--){
             sumTop += grades[i];
         }
 
@@ -467,10 +478,26 @@ public class CalculatorGPA{
         return sum/totalCourses;
     }
 
-    public static double[] convertGradesToWeighted(Scanner scanner, double[] grades, String label);
-    for(int i = 0; i<grades.length; i++){
-        System.out.println("For " + label + " class " + (i+1)+ ", what type is this course? (AP/Honors/Regular)");
-        String type = scanner.next();
-        grades[i] = convertToGPA(grades[i], type);
+    public static double[] convertGradesToWeighted(Scanner scanner, double[] grades, String label){
+        for(int i = 0; i<grades.length; i++){
+            System.out.println("For " + label + " class " + (i+1)+ ", what type is this course? (AP/Honors/Regular)");
+            String type = scanner.next();
+            grades[i] = convertToGPA(grades[i], type);
+        }
+        return grades;
+    }
+    public static double[] sort(double[] array){
+        for(int j = 0; j< array.length-1; j++){
+            int minIndex = j;
+            for(int i = j+1; i<array.length; i++){
+                if(array[minIndex]>array[i]){
+                    minIndex=i;
+                }
+            }
+            double temp = array[minIndex];
+            array[minIndex]=array[j];
+            array[j]=temp;
+        }
+        return array;
     }
 }

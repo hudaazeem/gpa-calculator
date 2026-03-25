@@ -1,23 +1,6 @@
-/*TODO
-    -Replace Arrays.sort() with the myCustomSort method provided above.
-    -Fix the loop in averageHighestGrades to collect numCourses instead of number.
-    -Delete the "TODO" comment block at the top before turning it in.
-*/
-
-/*
-    - option 0, 8, and 1 work
-    - option 2 works
-    - option 3 works
-    - option 4 works
-    - check option 5
-    - 
- */
-
 //I only used ChatGPT to use colors in the terminal, the while loop which has a "screen functionality", and debugging
 import java.util.Scanner;
 import java.util.Arrays;
-
-
 
 public class CalculatorGPA{
     //Here, I asked ChatGPT to help me write different colors in the terminal.
@@ -27,12 +10,13 @@ public class CalculatorGPA{
     public static final String GREEN = "\u001B[32m";
     public static final String YELLOW = "\u001B[33m";
     public static final String BLUE = "\u001B[34m";
-    
 
+    //Main method (where all the code actually runs)
     public static void main(String[] args){
         //New scanner
         Scanner scanner = new Scanner(System.in);
 
+        //This boolean determines if the screen is running or not
         boolean running = true; 
         
         //Welcome page

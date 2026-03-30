@@ -1,6 +1,5 @@
 //I only used ChatGPT to use colors in the terminal, the while loop which has a "screen functionality", and debugging
 import java.util.Scanner;
-import java.util.Arrays;
 
 public class CalculatorGPA{
     //Here, I asked ChatGPT to help me write different colors in the terminal.
@@ -9,7 +8,6 @@ public class CalculatorGPA{
     public static final String RED = "\u001B[31m";
     public static final String GREEN = "\u001B[32m";
     public static final String YELLOW = "\u001B[33m";
-    public static final String BLUE = "\u001B[34m";
 
     //Main method (where all the code actually runs)
     public static void main(String[] args){
@@ -55,7 +53,7 @@ public class CalculatorGPA{
                     break;
                 case 3: 
                     average = calculateCumulativeGPA(scanner);
-                    System.out.println("Your cumulative GPA is " + formatGPA(average) + "!");
+                    System.out.println("Your cumulative GPA is " + formatCumulGrade(average) + "!");
                     waitForEnter(scanner);
                     break;
                 case 4:
@@ -150,7 +148,7 @@ public class CalculatorGPA{
         scanner.nextLine();
     }
 
-    //Recieves user input
+    //Receives user input
     public static double[] receiveGrades(Scanner scanner, String courseType){
         System.out.println("Please input the number of " + courseType +" classes you are currently taking AND have taken.");
             int numCourses = scanner.nextInt();
@@ -261,7 +259,7 @@ public class CalculatorGPA{
 
         return average;
     }
-
+    
     public static double rankingGPA(Scanner scanner){
         System.out.println("What grade are you in? Please only enter numbers (ex. 10)");
         int grade = scanner.nextInt();
@@ -326,31 +324,35 @@ public class CalculatorGPA{
     }
 
     public static double averageHighestGrades(Scanner scanner, String subject, int number){
-        System.out.println("How many " + subject + "classes do you have?");
+        System.out.println("How many " + subject + " classes do you have?");
         int numCourses = scanner.nextInt();
 
         double[] grades = new double[numCourses];
+        
+        if(number == 0){
+            System.out.println("Error: Can't average zero grades");
+            return 0.0;
+        }
 
         for(int i = 0; i<numCourses; i++){   
-            System.out.println("What is the grade for " + subject + "class " + (i+1) +":");
+            System.out.println("What is the grade for " + subject + " class " + (i+1) +":");
             grades[i]=scanner.nextDouble();
             
 
         }
         sort(grades);
         double sumTop=0;
+        if(numCourses < number){
+            System.out.println("Error: You only entered "+ numCourses+" grades, but you need "+number+".");
+            return 0.0;
+        }
         for(int i = numCourses-1; i>=numCourses-number; i--){
             sumTop += grades[i];
         }
 
-        if(number == 0){
-            System.out.println("Error: Can't average zero grades");
-            return 0.0;
-        }
+        
 
-        if(numCourses < number){
-            System.out.println("Error: You only entered "+ numCourses+" grades, but you need "+number+".");
-        }
+        
 
         return sumTop/number;
     }
@@ -383,16 +385,6 @@ public class CalculatorGPA{
 
         return 0.0;
     }
-    
-    public static double calculateCustomClassGrade(Scanner scanner){
-        int numCategories = scanner.nextInt();
-        double[] percentages = new double[numCategories];
-        for(int i =0; i<numCategories; i++){
-            System.out.println("How many assignments do you have for category "+ i+"?");
-            
-        }
-        return 6.7;
-    }
 
     public static double calculateCustomWeightedGrade(Scanner scanner){
         System.out.println("How many different categories are present?");
@@ -402,7 +394,7 @@ public class CalculatorGPA{
 
 
         for(int i =0; i<numCategories; i++){
-            System.out.println("What is your weighting for category "+ i+"? Please write it as a decimal (eg 60% would be 0.6)");
+            System.out.println("What is your weighting for category "+ (i+1)+"? Please write it as a decimal (eg 60% would be 0.6)");
             weightings[i] = scanner.nextDouble();
         }
         double sum=0;
@@ -424,6 +416,7 @@ public class CalculatorGPA{
 
             if(grades.length==0){
                 System.out.println("Error: Category " + (i+1)+" has no grades.");
+                return 0.0;
             }
 
             categoryAverages[i] = total/grades.length;

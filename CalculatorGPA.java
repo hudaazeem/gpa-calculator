@@ -73,11 +73,14 @@ public class CalculatorGPA{
                     waitForEnter(scanner);
                     break;
                 case 7:
-                    System.out.println("Do you want to calculate weighted GPA? (y/n)");
-                    String weightedChoice = scanner.next();
+                    System.out.println("Do you want to calculate weighted GPA? (y/n)");                    String weightedChoice = scanner.next();
                     boolean weighted = weightedChoice.equalsIgnoreCase("y");
                     average = predictiveGPA(scanner, weighted);
-                    System.out.println("Your projected GPA is " + formatGPA(average)+ "!");
+                    if(weighted){
+                        System.out.println("Your projected GPA is " + formatGPA(average)+ "!");
+                    }else{
+                        System.out.println("Your projected unweighted GPA is " + formatGPA(average / 25) + "!"); 
+                    }
                     waitForEnter(scanner);
                     break;
                 case 8:
@@ -358,18 +361,18 @@ public class CalculatorGPA{
     }
 
     public static double convertToGPA(double grade, String courseType){
-        
+        courseType = courseType.trim().toLowerCase();
         double[] thresholds = new double[]{97, 93, 90, 87, 83, 80, 77, 73, 71, 70, 60};
         double[] gpas;
 
         switch(courseType){
-            case "AP":
+            case "ap":
                 gpas = new double[]{5.0, 4.8, 4.6, 4.4, 4.2, 4.0, 3.8, 3.6, 3.4, 3.0, 2.0};
                 break;
-            case "Honors":
+            case "honors":
                 gpas = new double[]{4.5, 4.3, 4.1, 3.9, 3.7, 3.5, 3.3, 3.1, 2.9, 2.5, 1.5};
                 break;
-            case "Regular":
+            case "regular":
                 gpas = new double[]{4.0, 3.8, 3.6, 3.4, 3.2, 3.0, 2.8, 2.6, 2.4, 2.0, 1.0};
                 break;
             default:
